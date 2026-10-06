@@ -1,0 +1,434 @@
+/* ═══════════════════════════════════════════════════════════
+   SAKSHAM MAP VIEW — High-Precision Operational Styling
+   MapView.module.css
+   ═══════════════════════════════════════════════════════════ */
+
+.mapWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #0E1A14;
+}
+
+.mapContainer {
+  width: 100%;
+  height: 100%;
+}
+
+.overlayOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 40px rgba(16, 21, 19, 0.2);
+}
+
+/* Markers Baseline: Small, precise, Swiss-style dots */
+.markerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.marker,
+.markerVisual {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s;
+}
+
+.markerVisual:hover {
+  transform: scale(1.3);
+  z-index: 999;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Hovered from the incident list (not map hover) */
+.markerHovered {
+  transform: scale(1.4);
+  z-index: 900;
+  animation: markerHoverPulse 2.5s ease-in-out infinite;
+}
+
+/* Selected / Active incident marker */
+.markerActive {
+  transform: scale(1.5);
+  z-index: 1000;
+  box-shadow: 0 0 0 5px rgba(232, 111, 22, 0.5), 0 4px 16px rgba(0, 0, 0, 0.7);
+  animation: none;
+}
+
+/* Dimmed when focus mode is on and this marker is not selected */
+.markerDimmed {
+  opacity: 0.25;
+  filter: grayscale(0.8);
+  animation: none;
+  transform: scale(0.8);
+  transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+}
+
+.markerDot {
+  width: 6px;
+  height: 6px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+}
+
+/* Severity Markers */
+.markerCritical {
+  background-color: #EF4444;
+  animation: pulseRed 3s infinite ease-in-out;
+}
+
+.markerHigh {
+  background-color: #F97316;
+}
+
+.markerMedium {
+  background-color: #EAB308;
+}
+
+/* Shelter Markers */
+.markerShelter {
+  background-color: #10B981;
+  color: #FFFFFF;
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-mono), monospace;
+  border-radius: 4px;
+}
+
+.markerShelterFull {
+  background-color: #EAB308;
+}
+
+/* Vehicle Markers */
+.markerVehicle {
+  background-color: #3B82F6;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+}
+
+.vehicleInner {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 9px solid #FFFFFF;
+  transform: translateY(-0.5px);
+}
+
+/* Resource Markers */
+.markerResource {
+  background-color: #6366F1;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.markerResourceLOW {
+  background-color: #EAB308;
+}
+
+.markerResourceDEPLETED {
+  background-color: #6B7280;
+}
+
+/* Map Popup Overrides (applied in JS template injection) */
+:global(.maplibregl-popup-content) {
+  background-color: rgba(16, 21, 19, 0.94) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(250, 248, 243, 0.08) !important;
+  padding: 10px !important;
+}
+
+:global(.maplibregl-popup-tip) {
+  border-top-color: rgba(16, 21, 19, 0.94) !important;
+}
+
+:global(.mapPopup) {
+  font-family: var(--font-sans), sans-serif;
+  color: #FAF8F3;
+  min-width: 160px;
+  max-width: 220px;
+}
+
+:global(.popupBadge) {
+  display: inline-block;
+  font-family: var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+:global(.badgeCRITICAL) {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #FF8F85;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+:global(.badgeHIGH) {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #FFB380;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+}
+
+:global(.badgeShelter) {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #A3E2B2;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+:global(.badgeVehicle) {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #93C5FD;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+:global(.badgeResource) {
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #A5B4FC;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+:global(.popupTitle) {
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 2px;
+  color: #FAF8F3;
+}
+
+:global(.popupLoc) {
+  font-size: 10px;
+  color: rgba(250, 248, 243, 0.6);
+  margin-bottom: 6px;
+}
+
+:global(.popupDesc) {
+  font-size: 11px;
+  color: rgba(250, 248, 243, 0.8);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+:global(.popupCapacityBar) {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(250, 248, 243, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 6px 0 4px;
+}
+
+:global(.popupCapacityFill) {
+  height: 100%;
+  background-color: #10B981;
+}
+
+:global(.popupCapText) {
+  font-size: 9px;
+  color: rgba(250, 248, 243, 0.45);
+  font-family: var(--font-mono), monospace;
+}
+
+:global(.popupCargo) {
+  font-size: 10.5px;
+  background-color: rgba(250, 248, 243, 0.03);
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  border: 1px solid rgba(250, 248, 243, 0.06);
+}
+
+/* Subtle, slow pulsing animations (CRITICAL only) */
+@keyframes pulseRed {
+  0%   { box-shadow: 0 0 0 0   rgba(239, 68, 68, 0.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(239, 68, 68, 0); }
+}
+
+/* Halo pulse for incident-list hovered marker */
+@keyframes markerHoverPulse {
+  0%   { box-shadow: 0 0 0 0px  rgba(250, 248, 243, 0.5), 0 2px 8px rgba(0,0,0,0.5); }
+  60%  { box-shadow: 0 0 0 8px  rgba(250, 248, 243, 0),   0 2px 8px rgba(0,0,0,0.5); }
+  100% { box-shadow: 0 0 0 0px  rgba(250, 248, 243, 0),   0 2px 8px rgba(0,0,0,0.5); }
+}
+
+.modeSelector {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+  background: rgba(16, 21, 19, 0.9);
+  backdrop-filter: blur(6px);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(250, 248, 243, 0.08);
+}
+
+.modeButton {
+  background: transparent;
+  border: none;
+  color: rgba(250, 248, 243, 0.6);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+}
+
+.modeButtonActive {
+  background: rgba(232, 111, 22, 0.9);
+  color: #FFFFFF;
+}
+
+.detailPanel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 320px;
+  background: rgba(16, 21, 19, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(250, 248, 243, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  z-index: 100;
+  overflow: hidden;
+  font-family: var(--font-sans), sans-serif;
+  color: #FAF8F3;
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(250, 248, 243, 0.06);
+}
+
+.panelBadge {
+  font-family: var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.badgeINCIDENT {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #FFB380;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+}
+
+.badgeVEHICLE {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #93C5FD;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.badgeSHELTER {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #A3E2B2;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badgeRESOURCE {
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #A5B4FC;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.panelClose {
+  background: transparent;
+  border: none;
+  color: rgba(250, 248, 243, 0.45);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.panelClose:hover {
+  color: #FAF8F3;
+}
+
+.panelContent {
+  padding: 12px;
+}
+
+.panelTitle {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #FAF8F3;
+}
+
+.panelRow {
+  font-size: 11px;
+  margin-bottom: 5px;
+  color: rgba(250, 248, 243, 0.7);
+  line-height: 1.4;
+}
+
+.panelRow strong {
+  color: #FAF8F3;
+  margin-right: 4px;
+}
+
+.panelActionButton {
+  margin-top: 10px;
+  width: 100%;
+  background: rgba(232, 111, 22, 0.9);
+  color: #FFFFFF;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.panelActionButton:hover {
+  background: rgba(232, 111, 22, 1.0);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.markerChild {
+  background-color: #FBBF24 !important;
+  width: 14px !important;
+  height: 14px !important;
+  box-shadow: 0 0 6px #FBBF24;
+}
